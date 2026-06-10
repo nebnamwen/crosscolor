@@ -25,7 +25,7 @@ grids.json      — puzzle definitions (fetched at startup)
 
 ## Grid Definitions (grids.json)
 
-Puzzles are hard-coded in `grids.json`. The top level is an object whose keys are difficulty tier names (e.g. `"beginner"`, `"intermediate"`, `"advanced"`). Each tier is an array of grid objects.
+Puzzles are hard-coded in `grids.json`. The top level is an array of difficulty tier objects, in display order. Each tier object has a `name` field and a `grids` array of grid objects.
 
 Each grid object has:
 
