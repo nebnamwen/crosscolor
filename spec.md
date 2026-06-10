@@ -31,9 +31,10 @@ Each grid object has:
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `id` | string | Unique identifier |
-| `name` | string | Display name |
+| `id` | string | Unique identifier; used as the `grid` query string parameter on `play.html` |
 | `cells` | 2D array of integers | Row-major grid; values are cell-type bitmasks (see below) |
+
+Grids have no display name. An optional `comment` field may be included for maintainer notes and is ignored by the game.
 
 ### Cell Type Encoding
 
@@ -198,7 +199,7 @@ Cells have padding/gap between them. Exact sizing TBD during implementation.
 
 ### Light / Dark Mode
 
-A toggle button switches the page background between black and white. All in-game colors (tile colors, border colors, star markers) must be visible against both backgrounds. The toggle affects only the background; it does not alter tile colors.
+A toggle button on each page switches the background between black and white. The current state is persisted in `localStorage` and applied on page load, so the setting is preserved when navigating between `index.html` and `play.html`. All in-game colors (tile colors, border colors, star markers) must be visible against both backgrounds. The toggle affects only the background; it does not alter tile colors.
 
 ---
 
@@ -227,12 +228,25 @@ On solving, every cell in the grid receives a small star marker in one corner (a
 
 ---
 
-## Puzzle Selection
+## Pages and Navigation
 
-A simple puzzle picker (outside the play area) lists difficulty tiers and the puzzles within each. Selecting a puzzle:
+The game is split across two HTML pages:
 
-1. Runs the color generation pipeline for that grid.
-2. Rewrites the HTML table.
-3. Resets game state (selection, perfect-run flag, placement state).
+### index.html — Puzzle Picker
+
+The entry point. Displays all available puzzles organized into tabs by difficulty tier. Tab headers appear across the top of the page in the order tiers appear in `grids.json`.
+
+Each puzzle is represented by a **shape preview**: a miniature HTML table generated from the grid's `cells` array using the same structure as the play area, but rendered at a small fixed size. All in-grid cells are shown as small solid gray squares (no colors, no hollow cells — too small to read). Absent cells are invisible.
+
+Clicking a shape preview navigates to `play.html?grid=<id>`.
+
+### play.html — Game
+
+Loads the grid identified by the `grid` query string parameter, runs the color generation pipeline, and renders the play area. Includes a **back button** (or link) that returns to `index.html`.
+
+On load:
+1. Parse the `grid` query parameter; if missing or unrecognized, redirect to `index.html`.
+2. Run the color generation pipeline for the selected grid.
+3. Render the HTML table and initialize game state.
 
 No progression system, unlocks, or persistence in the initial version.
