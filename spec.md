@@ -122,7 +122,11 @@ srgb = round(linear ^ (1 / 2.2) * 255)    (per channel)
 
 ### 5. Validation
 
-After generating and converting all colors, check that the puzzle is visually unambiguous. The player's only information is color, so every non-anchor tile must be distinguishable from every other non-anchor tile it is not adjacent to — adjacent tiles are expected to be similar (they are neighbors in a gradient).
+After generating and converting all colors, check that the puzzle is valid and visually unambiguous.
+
+**Out-of-gamut check**: after interpolating all cell colors, verify that every channel of every in-grid cell is within `[0, 255]`. Any cell can fall outside the representable color space if the affine function extrapolates beyond the seed colors' convex hull (common for cells in irregular region shapes, or the derived 4th corner of a quad). If any cell is out of gamut, reject and retry from step 1.
+
+**Distinguishability check**: the player's only information is color, so every non-anchor tile must be distinguishable from every other non-anchor tile it is not adjacent to — adjacent tiles are expected to be similar (they are neighbors in a gradient).
 
 - For every pair of non-anchor in-grid cells that are **not** orthogonally or diagonally adjacent to each other: compute the Euclidean distance between their sRGB values. If any such pair falls below a minimum threshold (TBD — start with ~20 on a 0–255 scale), reject and retry from step 1.
 - Maximum retry attempts: 20. If all fail, log a warning and use the last generated set.
