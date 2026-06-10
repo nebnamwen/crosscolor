@@ -126,9 +126,12 @@ After generating and converting all colors, check that the puzzle is valid and v
 
 **Out-of-gamut check**: after interpolating all cell colors, verify that every channel of every in-grid cell is within `[0, 255]`. Any cell can fall outside the representable color space if the affine function extrapolates beyond the seed colors' convex hull (common for cells in irregular region shapes, or the derived 4th corner of a quad). If any cell is out of gamut, reject and retry from step 1.
 
-**Distinguishability check**: the player's only information is color, so every non-anchor tile must be distinguishable from every other non-anchor tile it is not adjacent to — adjacent tiles are expected to be similar (they are neighbors in a gradient).
+**Adjacent step check**: seed colors too close together produce gradients where even neighboring cells are indistinguishable. For every pair of in-grid cells that are orthogonally or diagonally adjacent, compute the Euclidean distance between their sRGB values. If any adjacent pair falls below a minimum threshold (TBD — smaller than the non-adjacent threshold), reject and retry from step 1.
 
-- For every pair of non-anchor in-grid cells that are **not** orthogonally or diagonally adjacent to each other: compute the Euclidean distance between their sRGB values. If any such pair falls below a minimum threshold (TBD — start with ~20 on a 0–255 scale), reject and retry from step 1.
+**Non-adjacent distinguishability check**: the player's only information is color, so every in-grid tile (including anchors) must be distinguishable from every other in-grid tile it is not adjacent to. For every pair of in-grid cells that are not orthogonally or diagonally adjacent, compute the Euclidean distance between their sRGB values. If any such pair falls below a minimum threshold (TBD — start with ~20 on a 0–255 scale), reject and retry from step 1.
+
+Both checks are cell-by-cell in sRGB space. Grids are small enough that the O(cells²) cost is not a concern.
+
 - Maximum retry attempts: 20. If all fail, log a warning and use the last generated set.
 
 > **Note — geometric alternative**: a more efficient approach is to treat each region as a line segment (1D) or triangle/quad (2D) in RGB color cube space, then check that regions don't intersect except at shared seed corners, and that the angle at each shared corner is above a minimum. This is O(regions) rather than O(cells²) and catches structural problems rather than symptoms. The cell-by-cell approach above is preferred for readability.
