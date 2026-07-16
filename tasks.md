@@ -21,7 +21,8 @@ Roughly in implementation order. Later phases depend on earlier ones.
 - [ ] Validation: adjacent step threshold check
 - [ ] Validation: non-adjacent distinguishability check
 - [ ] Retry loop (no hard cap — keep trying until valid assignment found)
-- [ ] Test harness: a JS function exposed to the browser console that runs the color pipeline against every grid N times and logs mean and worst-case time and iteration count per grid
+- [ ] Expose a `crosscolor` global object on game pages for console-accessible testing
+- [ ] Test harness: `crosscolor.testGeneration(n)` — runs the color pipeline against every grid N times and logs mean and worst-case time and iteration count per grid
 
 ## Phase 3 — index.html (Puzzle Picker)
 
