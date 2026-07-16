@@ -193,8 +193,8 @@ No drag-and-drop. All interaction is click-based:
 | Vacant (in palette) | Small solid rounded square centered in the cell, neutral gray fill |
 | Filled (player-placed or anchor) | Solid rounded square, filled with the tile's color |
 | Selected | Filled rounded square with a highlighted border or glow |
-| Anchor (solved state) | Small star marker in one corner |
-| Any cell (puzzle solved) | Small star marker in one corner |
+| Anchor | Anchor marker character (`✓`, see UI Refinements) centered or cornered on the tile |
+| Any cell (puzzle solved) | Same anchor marker character on every cell |
 
 Cells have padding/gap between them. Exact sizing TBD during implementation.
 
@@ -225,7 +225,7 @@ The perfect-run flag is a boolean that starts `true` and is permanently set to `
 
 ### Win Presentation
 
-On solving, every cell in the grid receives a small star marker in one corner (anchors already had this marker; the rest gain it simultaneously). This is the primary win feedback. A short CSS transition or animation should accompany the stars appearing. No modal or overlay is required.
+On solving, every cell in the grid receives the anchor marker character (anchors already had it; the rest gain it simultaneously). This is the primary win feedback. A short CSS transition or animation should accompany the stars appearing. No modal or overlay is required.
 
 ---
 
@@ -237,7 +237,7 @@ The game is split across two HTML pages:
 
 The entry point. Displays all available puzzles organized into tabs by difficulty tier. Tab headers appear across the top of the page in the order tiers appear in `grids.json`.
 
-Each puzzle is represented by a **shape preview**: a miniature HTML table generated from the grid's `cells` array using the same structure as the play area, but rendered at a small fixed size. All in-grid cells are shown as small solid gray squares (no colors, no hollow cells — too small to read). Absent cells are invisible.
+Each puzzle is represented by a **shape preview**: a miniature HTML table generated from the grid's `cells` array using the same structure as the play area, but rendered at a small fixed size. Normal in-grid cells are shown as small solid gray squares. Anchor cells show the anchor marker character (see Visual Design), allowing same-shape puzzles with different anchor arrangements to be visually distinguished. Absent cells are invisible.
 
 Clicking a shape preview navigates to `play.html?grid=<id>`.
 
@@ -265,3 +265,4 @@ Decisions on non-essential visual and interaction details, to be revisited durin
 | 3 | Win animation | CSS transition on star markers appearing; exact timing TBD |
 | 4 | Back button style on `play.html` | TBD |
 | 5 | Tab style on `index.html` | TBD |
+| 6 | Anchor marker character | Placeholder `✓` (`&check;`) — revisit: checkmark (original game) vs star (`★`) or other; one HTML entity, easy to change |
