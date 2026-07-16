@@ -7,7 +7,7 @@ A browser-based remake of Blendoku, a color-ordering puzzle game. The player arr
 ## Technology Stack
 
 - Pure HTML5 / CSS / JavaScript — no frameworks, no build step
-- Single HTML file entry point (`index.html`), with separate `style.css` and `game.js`
+- Two HTML pages: `index.html` (puzzle picker) and `play.html` (game)
 - No runtime dependencies initially; a perceptual color space library may be added later as an enhancement (see [Color Pipeline](#color-pipeline))
 
 ---
@@ -15,11 +15,13 @@ A browser-based remake of Blendoku, a color-ordering puzzle game. The player arr
 ## File Structure
 
 ```
-index.html      — shell, loads style.css and game.js
-style.css       — all visual styling
-game.js         — all game logic
+index.html      — puzzle picker
+play.html       — game
+style.css       — all visual styling (shared)
 grids.json      — puzzle definitions (fetched at startup)
 ```
+
+JavaScript structure TBD; at minimum one shared module for grid loading and color pipeline, separate entry points for each page.
 
 ---
 
@@ -71,18 +73,23 @@ At startup, every grid in `grids.json` must be validated:
 
 ## Region Detection
 
-Seeds partition the puzzle into regions. A **region** is defined as:
+Seeds partition the puzzle into regions. A **region** is one connected component of non-seed cells together with the seed cells that border it. Connectivity is 4-directional (orthogonal only; diagonals are not connections).
 
-> One connected component of non-seed in-grid cells, together with all seed cells that are orthogonally adjacent to any cell in that component.
+Algorithm (seed-outward walk):
 
-Algorithm:
+```
+for each seed cell S:
+    for each orthogonally adjacent normal (non-seed) cell N that is not yet marked:
+        create a new region
+        add S to region's seeds
+        flood-fill from N:
+            mark N; add N to region's cells
+            for each orthogonal neighbor of N:
+                if normal and unmarked: recurse
+                if seed: add to region's seeds (do not recurse)
+```
 
-1. Collect all non-seed in-grid cells.
-2. Find connected components using 4-connectivity (orthogonal adjacency only; diagonals are not connections).
-3. For each component, find all seed cells adjacent to any cell in the component — these are the region's **bounding seeds**.
-4. A seed shared between two components belongs to both regions.
-
-Seeds themselves are not members of any component in the flood-fill, but they are included in the final region definition as boundary nodes.
+A seed whose orthogonal neighbors are all either seeds or already-marked cells contributes no new region for those adjacencies.
 
 ---
 
@@ -145,20 +152,13 @@ The gamma correction step (expand/compress with 2.2) will later be replaceable w
 
 ## UI Layout
 
-The play area is an HTML `<table>`. Rows are ordered top-to-bottom as:
+The play area on `play.html` is an HTML `<table>`. Row order top-to-bottom:
 
-1. **Palette rows** (1–2 rows, determined by `ceil(tileCount / gridWidth)`) — not represented in `grids.json`
-2. **Grid rows** — one table row per row in the `cells` array
-
-Each table cell contains a single `&nbsp;`. All visual treatment is applied via CSS and JavaScript (classes, inline styles for colors).
-
-When a different puzzle is selected, the table is rewritten entirely.
-
-Row order in the table:
-
-1. **Palette rows** (1–2 rows)
-2. **Spacer row** — one implicit row of absent cells, creating visual separation between palette and grid
+1. **Palette rows** — `ceil(tileCount / gridWidth)` rows (1–2 in practice); not represented in `grids.json`
+2. **Spacer row** — one implicit row of absent cells, creating visual separation
 3. **Grid rows** — one row per row in the `cells` array
+
+Each table cell contains a single `&nbsp;`. All visual treatment is applied via CSS and JavaScript (classes, inline styles for colors). When a new puzzle loads, the table is rewritten entirely.
 
 ### Palette
 
@@ -250,3 +250,17 @@ On load:
 3. Render the HTML table and initialize game state.
 
 No progression system, unlocks, or persistence in the initial version.
+
+---
+
+## UI Refinements
+
+Decisions on non-essential visual and interaction details, to be revisited during implementation. Items without a resolution are open questions.
+
+| # | Topic | Decision |
+|---|-------|----------|
+| 1 | Cell sizing and gap | TBD during implementation |
+| 2 | Selected tile highlight style | Highlighted border or glow — exact style TBD |
+| 3 | Win animation | CSS transition on star markers appearing; exact timing TBD |
+| 4 | Back button style on `play.html` | TBD |
+| 5 | Tab style on `index.html` | TBD |
