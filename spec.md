@@ -140,7 +140,7 @@ After generating and converting all colors, check that the puzzle is valid and v
 
 Both checks are cell-by-cell in sRGB space. Grids are small enough that the O(cells²) cost is not a concern.
 
-- Maximum retry attempts: 20. If all fail, log a warning and use the last generated set.
+The retry loop runs until a valid assignment is found — there is no hard cap. If any grid consistently takes a long time to generate, the fix is to improve the pipeline (e.g. constrain the initial seed color selection to avoid common failure modes), not to give up. A test harness function should be exposed to the browser console (e.g. `crosscolor.testGeneration(n)`) that runs the color pipeline against every grid in `grids.json` `n` times and logs the mean and worst-case time and iteration count per grid, to surface any pathological cases.
 
 > **Note — geometric alternative**: a more efficient approach is to treat each region as a line segment (1D) or triangle/quad (2D) in RGB color cube space, then check that regions don't intersect except at shared seed corners, and that the angle at each shared corner is above a minimum. This is O(regions) rather than O(cells²) and catches structural problems rather than symptoms. The cell-by-cell approach above is preferred for readability.
 
@@ -189,7 +189,8 @@ No drag-and-drop. All interaction is click-based:
 | State | Appearance |
 |-------|------------|
 | Not in grid | No cell rendered (table cell is invisible/empty) |
-| Vacant (in grid or palette) | Hollow rounded square, neutral gray border, transparent fill |
+| Vacant (in grid) | Hollow rounded square, neutral gray border, transparent fill |
+| Vacant (in palette) | Small solid rounded square centered in the cell, neutral gray fill |
 | Filled (player-placed or anchor) | Solid rounded square, filled with the tile's color |
 | Selected | Filled rounded square with a highlighted border or glow |
 | Anchor (solved state) | Small star marker in one corner |

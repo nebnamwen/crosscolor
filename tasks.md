@@ -20,7 +20,8 @@ Roughly in implementation order. Later phases depend on earlier ones.
 - [ ] Validation: out-of-gamut check
 - [ ] Validation: adjacent step threshold check
 - [ ] Validation: non-adjacent distinguishability check
-- [ ] Retry loop (up to 20 attempts, warn on exhaustion)
+- [ ] Retry loop (no hard cap — keep trying until valid assignment found)
+- [ ] Test harness: a JS function exposed to the browser console that runs the color pipeline against every grid N times and logs mean and worst-case time and iteration count per grid
 
 ## Phase 3 — index.html (Puzzle Picker)
 
