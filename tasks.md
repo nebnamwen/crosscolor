@@ -7,7 +7,6 @@ Roughly in implementation order. Later phases depend on earlier ones.
 ## Phase 1 — Data
 
 - [ ] Add enough grids to `grids.json` to begin development (a few per tier, covering the main shape types)
-- [ ] Complete `grids.json` with the full puzzle set for release
 - [ ] Write grid validation (region seed count, connectivity) and run against `grids.json` at startup
 
 ## Phase 2 — Color Pipeline
@@ -53,6 +52,7 @@ Roughly in implementation order. Later phases depend on earlier ones.
 
 ## Phase 5 — Polish
 
+- [ ] Complete `grids.json` with the full puzzle set for release
 - [ ] Tune adjacent step threshold
 - [ ] Tune non-adjacent distinguishability threshold
 - [ ] Visual refinements (see UI Refinements section of spec.md)
