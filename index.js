@@ -79,6 +79,14 @@ function renderTabs(grids) {
   showTab(0);
 }
 
+// ---------- Navigation ----------
+
+previewsEl.addEventListener('click', e => {
+  const item = e.target.closest('.preview-item');
+  if (!item) return;
+  window.location.href = `play.html?tier=${item.dataset.tier}&grid=${item.dataset.grid}`;
+});
+
 // ---------- Boot ----------
 
 crosscolor.loadGrids().then(grids => renderTabs(grids));
