@@ -120,3 +120,61 @@ button:hover {
   text-align: center;
   color: var(--bg);
 }
+
+/* ---------- Play area ---------- */
+
+#play-area {
+  display: flex;
+  justify-content: center;
+  padding: 1.25rem;
+}
+
+.play-grid {
+  border-collapse: separate;
+  border-spacing: 4px;
+  width: max-content;
+}
+
+.play-grid td {
+  width: 48px;
+  height: 48px;
+}
+
+.play-grid .tile {
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 48px;
+  text-align: center;
+  color: rgba(0,0,0,0.4);
+}
+
+.play-grid .anchor {
+  cursor: default;
+}
+
+.play-grid .vacant {
+  border-radius: 8px;
+  border: 2px solid var(--border);
+}
+
+.play-grid .palette-vacant {
+  border: none;
+  position: relative;
+}
+
+.play-grid .palette-vacant::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px;
+  height: 16px;
+  background: var(--cell-neutral);
+  border-radius: 3px;
+}
+
+.play-grid .spacer-row td {
+  height: 16px;
+}
