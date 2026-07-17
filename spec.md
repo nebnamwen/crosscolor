@@ -177,7 +177,10 @@ Each table cell contains a single `&nbsp;`. All visual treatment is applied via 
 - Tiles are laid out left-to-right, top-to-bottom across the palette rows.
 - When a tile moves from the palette to the grid, it leaves a **vacant slot** (hollow rounded square) in its original position. The palette layout does not reflow.
 - Tiles can be moved back from the grid to vacant palette slots (or any vacant palette slot if the original is filled).
-- A **Reshuffle** button randomizes the positions of unplaced tiles within the palette, filling from the left.
+- **Reshuffle / reset buttons** — three possible behaviors to revisit in polish (see UI Refinements):
+  1. *Regenerate* — rerun the color pipeline from scratch (new seed colors). A page reload does this; may not need a dedicated button.
+  2. *Reset* — return all movable tiles to the palette in a new random order, keeping the current colors. Equivalent to the reset button in the original game.
+  3. *Reshuffle palette* — randomize only the unplaced tiles still in the palette, filling left to right. No equivalent in the original game.
 
 ---
 
@@ -272,7 +275,8 @@ Decisions on non-essential visual and interaction details, to be revisited durin
 | # | Topic | Decision |
 |---|-------|----------|
 | 1 | Cell sizing and gap | Fixed at 48px + 4px gap for now. Polish: drive all sizes from a `--tile-size` CSS custom property set by JS as `min(viewportW / tableW, viewportH / totalRows, maxSize)`, with a resize listener, so the layout fills the window for any puzzle size. |
-| 2 | Selected tile highlight style | Highlighted border or glow — exact style TBD |
+| 2 | Selected tile highlight style | 4px solid outline, 0 offset |
+| 7 | Reshuffle / reset button(s) | Deferred — see Palette section. Options: regenerate colors (page reload may suffice), reset all tiles to palette (most natural), or reshuffle unplaced palette tiles only. Decide in polish. |
 | 3 | Win animation | CSS transition on star markers appearing; exact timing TBD |
 | 4 | Back button style on `play.html` | TBD |
 | 5 | Tab style on `index.html` | TBD |
