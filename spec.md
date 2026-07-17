@@ -60,13 +60,13 @@ Stored values and their meanings:
 | 3 | 2 | Seed (color is randomly generated; player must place it) |
 | 4 | 3 | Seed + anchor (color is randomly generated, shown to player as fixed) |
 
-Attribute bit 2 (stored value 5–8) is reserved for future use. Keeping all values single-digit (0–9) preserves column alignment in JSON source while leaving one more attribute bit available — enough to encode, for example, a low-saturation constraint on certain cells.
+Attribute bit 2 (stored value 5–8) is reserved for future use. Keeping all values single-digit (0–9) preserves column alignment in JSON source while leaving one more attribute bit available — enough to encode, for example, a low-saturation constraint on certain cells, or a future region-connectivity hint if puzzle shapes arise that the seed-partitioning algorithm cannot represent correctly as a single region.
 
 ### Validation Requirement
 
 At startup, every grid in `grids.json` must be validated:
 
-1. **Region seed count**: every region (see [Region Detection](#region-detection)) must have exactly 2 bounding seeds if all its cells are collinear, or exactly 3 bounding seeds otherwise. Grids that fail this check must be flagged as invalid and excluded from play.
+1. **Region seed count**: every region (see [Region Detection](#region-detection)) must have exactly 2 bounding seeds if all its cells are collinear, exactly 3 for a triangular 2D region, or exactly 4 for a rectangular/parallelogram 2D region. Grids that fail this check must be flagged as invalid and excluded from play.
 
 ---
 
@@ -113,11 +113,8 @@ All interpolation is performed in linear light space.
 For each region:
 
 - If the region has **2 bounding seeds** (1D region — all cells are collinear): interpolate linearly along the path. Each non-seed cell's color is determined by its distance (in cell hops along the path) between the two seeds.
-- If the region has **3 bounding seeds** (2D region): fit an **affine function** `f(x, y) = ax + by + c` (independently per channel) through the three seed positions and their linear-light color values, then evaluate at each non-seed cell's grid coordinates `(col, row)`.
-
-The affine function satisfies the invariant: *for any three collinear cells (orthogonally or diagonally), the middle cell's color is the average of the outer two.* This holds for all line directions by construction.
-
-> **Open question — bilinear interpolation**: some puzzles (observed in Medium difficulty) appear to use 4 seeds forming a rectangular quad, with interpolation that looks bilinear rather than affine. Bilinear adds a cross term: `f(x, y) = ax + by + cxy + d`, which satisfies linearity along horizontal and vertical lines but not diagonals. If confirmed, the region validation and interpolation code must support a 4-seed case alongside 2 and 3. The diagonal behavior is the tell: if the center of a 3×3 quad is the average of both pairs of opposite corners, it's affine; if only the horizontal and vertical midpoints hold, it's bilinear. Needs verification against the original game before implementation.
+- If the region has **3 bounding seeds** (triangular 2D region): fit an **affine function** `f(x, y) = ax + by + c` (independently per channel) through the three seed positions and their linear-light color values, then evaluate at each non-seed cell's grid coordinates `(col, row)`. The affine function satisfies linearity along all directions including diagonals.
+- If the region has **4 bounding seeds** (rectangular/parallelogram 2D region): use **bilinear interpolation** `f(x, y) = ax + by + cxy + d`, fitting through all four corner seeds. This satisfies linearity along horizontal and vertical lines but not diagonals — the horizontal gradient varies from row to row, which is visually confirmed in large rectangle puzzles from the original game (the gradient vectors along the top and bottom edges are not parallel).
 
 Seed cells shared between regions take their color from the seed assignment (step 1), not from interpolation.
 
