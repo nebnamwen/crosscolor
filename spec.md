@@ -67,7 +67,6 @@ Attribute bit 2 (stored value 5–8) is reserved for future use. Keeping all val
 At startup, every grid in `grids.json` must be validated:
 
 1. **Region seed count**: every region (see [Region Detection](#region-detection)) must have exactly 2 bounding seeds if all its cells are collinear, or exactly 3 bounding seeds otherwise. Grids that fail this check must be flagged as invalid and excluded from play.
-2. **Connectivity**: all in-grid cells must form a single connected component (orthogonal adjacency).
 
 ---
 
