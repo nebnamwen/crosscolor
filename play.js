@@ -259,6 +259,8 @@ crosscolor.loadGrids().then(grids => {
   const regions = crosscolor.detectRegions(grid);
   const { colorMap } = crosscolor.generateColorsForGrid(grid, regions);
 
+  document.getElementById('back-btn').href = `index.html?tier=${tierIndex}`;
+
   resetGameState();
   const table = renderTable(grid, colorMap);
   table.addEventListener('click', handleClick);

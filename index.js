@@ -56,9 +56,9 @@ function renderTier(tier, tierIndex) {
   return section;
 }
 
-function renderTabs(grids) {
+function renderTabs(grids, initialTab) {
   const sections = grids.map((tier, t) => renderTier(tier, t));
-  let activeTab = 0;
+  let activeTab = Math.min(initialTab, grids.length - 1);
 
   function showTab(index) {
     activeTab = index;
@@ -76,7 +76,7 @@ function renderTabs(grids) {
     tabsEl.appendChild(btn);
   });
 
-  showTab(0);
+  showTab(activeTab);
 }
 
 // ---------- Navigation ----------
@@ -89,4 +89,7 @@ previewsEl.addEventListener('click', e => {
 
 // ---------- Boot ----------
 
-crosscolor.loadGrids().then(grids => renderTabs(grids));
+crosscolor.loadGrids().then(grids => {
+  const tier = parseInt(new URLSearchParams(window.location.search).get('tier'), 10);
+  renderTabs(grids, isNaN(tier) ? 0 : tier);
+});
