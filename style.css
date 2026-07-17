@@ -99,6 +99,21 @@ button:hover, #back-btn:hover, .icon-btn:hover {
   line-height: 1.6;
 }
 
+#about-content h2 {
+  margin-top: 1.75rem;
+  margin-bottom: 0.4rem;
+  letter-spacing: 0.05em;
+  color: var(--cell-neutral);
+}
+
+#about-content p + p {
+  margin-top: 0.75rem;
+}
+
+.mono {
+  font-family: 'Courier New', Courier, monospace;
+}
+
 /* ---------- Tabs ---------- */
 
 #tabs {
