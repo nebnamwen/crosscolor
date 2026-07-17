@@ -147,6 +147,15 @@ function resetGameState() {
   solved = false;
 }
 
+// ---------- Animation ----------
+
+function animateTile(td, cls) {
+  td.classList.remove(cls);
+  void td.offsetWidth; // force reflow to restart animation
+  td.classList.add(cls);
+  td.addEventListener('animationend', () => td.classList.remove(cls), { once: true });
+}
+
 // ---------- Tile helpers ----------
 
 function setSelected(td) {
@@ -161,6 +170,7 @@ function makeTile(td, bg, srcRow, srcCol) {
   td.style.background = bg;
   td.dataset.srcRow = srcRow;
   td.dataset.srcCol = srcCol;
+  td.innerHTML = '';
 }
 
 function makeVacant(td) {
@@ -168,6 +178,7 @@ function makeVacant(td) {
   td.className = 'vacant ' + vacantClass;
   td.dataset.cellType = td.dataset.cellType;
   td.style.background = '';
+  td.innerHTML = '';
   delete td.dataset.srcRow;
   delete td.dataset.srcCol;
 }
@@ -181,6 +192,7 @@ function moveTile(from, to) {
   if (to.dataset.cellType === 'grid' && !isCorrectGridPlacement(from, to))
     perfectRun = false;
   makeTile(to, from.style.background, from.dataset.srcRow, from.dataset.srcCol);
+  animateTile(to, 'tile-place');
   makeVacant(from);
 }
 
@@ -190,6 +202,8 @@ function swapTiles(a, b) {
   const [bgA, rowA, colA] = [a.style.background, a.dataset.srcRow, a.dataset.srcCol];
   makeTile(a, b.style.background, b.dataset.srcRow, b.dataset.srcCol);
   makeTile(b, bgA, rowA, colA);
+  animateTile(a, 'tile-place');
+  animateTile(b, 'tile-place');
 }
 
 // ---------- Win detection ----------
@@ -210,6 +224,37 @@ function showWin(table, isPerfect) {
     td.classList.add('win-marked');
   });
   table.classList.add(isPerfect ? 'perfect' : 'solved');
+}
+
+// ---------- Reset ----------
+
+function resetPuzzle(table) {
+  setSelected(null);
+  perfectRun = true;
+  solved = false;
+  table.classList.remove('solved', 'perfect');
+
+  // Restore anchor markers cleared by showWin
+  table.querySelectorAll('.tile.anchor').forEach(td => {
+    td.classList.remove('win-marked');
+    td.innerHTML = ANCHOR_MARKER;
+  });
+
+  // Collect all movable tiles from palette and grid
+  const tileData = [...table.querySelectorAll('.tile:not(.anchor)')].map(td => ({
+    bg: td.style.background, srcRow: td.dataset.srcRow, srcCol: td.dataset.srcCol
+  }));
+  tileData.sort(() => Math.random() - 0.5);
+
+  // Clear all movable tiles back to vacant
+  table.querySelectorAll('.tile:not(.anchor)').forEach(td => makeVacant(td));
+
+  // Redistribute into palette cells
+  const paletteCells = [...table.querySelectorAll('[data-cell-type="palette"]')];
+  tileData.forEach((data, i) => {
+    makeTile(paletteCells[i], data.bg, data.srcRow, data.srcCol);
+    animateTile(paletteCells[i], 'tile-appear');
+  });
 }
 
 // ---------- Interaction ----------
@@ -260,6 +305,9 @@ crosscolor.loadGrids().then(grids => {
   const { colorMap } = crosscolor.generateColorsForGrid(grid, regions);
 
   document.getElementById('back-btn').href = `index.html?tier=${tierIndex}`;
+  document.getElementById('reset-btn').addEventListener('click', () => {
+    resetPuzzle(document.getElementById('play-table'));
+  });
 
   resetGameState();
   const table = renderTable(grid, colorMap);
