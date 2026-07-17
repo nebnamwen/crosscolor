@@ -62,11 +62,16 @@ Stored values and their meanings:
 
 Attribute bit 2 (stored value 5–8) is reserved for future use. Keeping all values single-digit (0–9) preserves column alignment in JSON source while leaving one more attribute bit available — enough to encode, for example, a low-saturation constraint on certain cells, or a future region-connectivity hint if puzzle shapes arise that the seed-partitioning algorithm cannot represent correctly as a single region.
 
+### Grid Authoring Rules
+
+- Seeds must be placed at geometric extremities only — tips of arms, corners of rectangles. A seed in the middle of a straight orthogonal run would create a visible kink in the gradient where the interpolation direction could change.
+
 ### Validation Requirement
 
 At startup, every grid in `grids.json` must be validated:
 
 1. **Region seed count**: every region (see [Region Detection](#region-detection)) must have exactly 2 bounding seeds if all its cells are collinear, exactly 3 for a triangular 2D region, or exactly 4 for a rectangular/parallelogram 2D region. Grids that fail this check must be flagged as invalid and excluded from play.
+2. **Seed placement**: a seed with two collinear in-grid neighbors on the same orthogonal axis is likely misplaced. Flag as a warning (not necessarily invalid, but worth reviewing).
 
 ---
 
