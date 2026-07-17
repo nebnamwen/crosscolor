@@ -29,14 +29,9 @@ JavaScript structure TBD; at minimum one shared module for grid loading and colo
 
 Puzzles are hard-coded in `grids.json`. The top level is an array of difficulty tier objects, in display order. Each tier object has a `name` field and a `grids` array of grid objects.
 
-Each grid object has:
+Each tier object has a `"name"` string and a `"grids"` array. Each element of `"grids"` is a bare 2D array of integers (row-major; values are cell-type encodings described below). Grids have no id or display name; they are identified by their tier index and position within that tier.
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `id` | string | Unique identifier; used as the `grid` query string parameter on `play.html` |
-| `cells` | 2D array of integers | Row-major grid; values are cell-type bitmasks (see below) |
-
-Grids have no display name. An optional `comment` field may be included for maintainer notes and is ignored by the game.
+> **Future**: a maintainer comment could be supported by allowing an optional leading string as the first element of a grid array (before the row arrays), ignored by the game. Not implemented yet.
 
 ### Cell Type Encoding
 
@@ -242,14 +237,14 @@ The entry point. Displays all available puzzles organized into tabs by difficult
 
 Each puzzle is represented by a **shape preview**: a miniature HTML table generated from the grid's `cells` array using the same structure as the play area, but rendered at a small fixed size. Normal in-grid cells are shown as small solid gray squares. Anchor cells show the anchor marker character (see Visual Design), allowing same-shape puzzles with different anchor arrangements to be visually distinguished. Absent cells are invisible.
 
-Clicking a shape preview navigates to `play.html?grid=<id>`.
+Clicking a shape preview navigates to `play.html?tier=<tierIndex>&grid=<gridIndex>`.
 
 ### play.html — Game
 
-Loads the grid identified by the `grid` query string parameter, runs the color generation pipeline, and renders the play area. Includes a **back button** (or link) that returns to `index.html`.
+Loads the grid identified by the `tier` and `grid` query string parameters (both zero-based integer indices into `grids.json`), runs the color generation pipeline, and renders the play area. Includes a **back button** (or link) that returns to `index.html`.
 
 On load:
-1. Parse the `grid` query parameter; if missing or unrecognized, redirect to `index.html`.
+1. Parse the `tier` and `grid` query parameters; if missing or out of range, redirect to `index.html`.
 2. Run the color generation pipeline for the selected grid.
 3. Render the HTML table and initialize game state.
 
