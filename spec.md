@@ -157,9 +157,17 @@ The gamma correction step (expand/compress with 2.2) will later be replaceable w
 
 The play area on `play.html` is an HTML `<table>`. Row order top-to-bottom:
 
-1. **Palette rows** — `ceil(tileCount / gridWidth)` rows (1–2 in practice); not represented in `grids.json`
+1. **Palette rows** — always exactly 2 rows; not represented in `grids.json`
 2. **Spacer row** — one implicit row of absent cells, creating visual separation
 3. **Grid rows** — one row per row in the `cells` array
+
+**Palette width** is computed as follows:
+
+1. `raw = max(3, ceil(tileCount / 2))`
+2. If `raw % 2 !== puzzleWidth % 2`: `raw += 1`  (match parity with puzzle)
+3. `paletteWidth = raw`
+
+**Table width** is `max(paletteWidth, puzzleWidth)`. Whichever is narrower is centered in the table using absent-cell padding. In large Hard puzzles the palette may be wider than the puzzle.
 
 Each table cell contains a single `&nbsp;`. All visual treatment is applied via CSS and JavaScript (classes, inline styles for colors). When a new puzzle loads, the table is rewritten entirely.
 
