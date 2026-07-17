@@ -117,6 +117,8 @@ For each region:
 
 The affine function satisfies the invariant: *for any three collinear cells (orthogonally or diagonally), the middle cell's color is the average of the outer two.* This holds for all line directions by construction.
 
+> **Open question — bilinear interpolation**: some puzzles (observed in Medium difficulty) appear to use 4 seeds forming a rectangular quad, with interpolation that looks bilinear rather than affine. Bilinear adds a cross term: `f(x, y) = ax + by + cxy + d`, which satisfies linearity along horizontal and vertical lines but not diagonals. If confirmed, the region validation and interpolation code must support a 4-seed case alongside 2 and 3. The diagonal behavior is the tell: if the center of a 3×3 quad is the average of both pairs of opposite corners, it's affine; if only the horizontal and vertical midpoints hold, it's bilinear. Needs verification against the original game before implementation.
+
 Seed cells shared between regions take their color from the seed assignment (step 1), not from interpolation.
 
 ### 4. Gamma Compression (Linear → sRGB)
