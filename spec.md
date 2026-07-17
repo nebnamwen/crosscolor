@@ -19,9 +19,14 @@ index.html      — puzzle picker
 play.html       — game
 style.css       — all visual styling (shared)
 grids.json      — puzzle definitions (fetched at startup)
+crosscolor.js   — shared: grid loading, cell encoding helpers, region detection,
+                  color pipeline, light/dark mode toggle, crosscolor global + test harness
+index.js        — index.html page: render tier tabs and shape previews
+play.js         — play.html page: parse query params, run pipeline, render play area,
+                  interaction model, win detection
 ```
 
-JavaScript structure TBD; at minimum one shared module for grid loading and color pipeline, separate entry points for each page.
+`crosscolor.js` is loaded first on both pages (via a `<script>` tag before the page-specific script) and exposes a `window.crosscolor` global used for the console test harness. `index.js` and `play.js` are plain scripts with no module system; they depend on `crosscolor.js` being loaded first.
 
 ---
 
