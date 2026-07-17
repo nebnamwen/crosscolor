@@ -29,14 +29,13 @@ function paletteWidth(tileCount, puzzleWidth) {
 // Cell row height = 48px tile + 4px border-spacing = 52px.
 function optimalSpacerRows(tableW, gridRows) {
   const cell = 52;
-  const totalDataRows = 2 + gridRows; // palette rows + grid rows
+  const totalDataRows = 2 + gridRows;
   const width = tableW * cell;
   const height1 = (totalDataRows + 1) * cell;
   const height2 = (totalDataRows + 2) * cell;
   return Math.abs(width - height2) < Math.abs(width - height1) ? 2 : 1;
 }
 
-// Spacer td height for N equivalent row heights: N*48 + (N-1)*4 px.
 function spacerTdHeight(rows) {
   return rows * 48 + (rows - 1) * 4;
 }
@@ -57,7 +56,6 @@ function renderTable(grid, colorMap) {
   const rows = grid.length;
   const puzzleWidth = Math.max(...grid.map(r => r.length));
 
-  // Count movable (non-anchor in-grid) tiles
   const movableCells = [];
   for (let r = 0; r < rows; r++)
     for (let c = 0; c < grid[r].length; c++)
@@ -66,8 +64,6 @@ function renderTable(grid, colorMap) {
 
   const palW = paletteWidth(movableCells.length, puzzleWidth);
   const tableW = Math.max(palW, puzzleWidth);
-
-  // Palette tiles in shuffled order
   const shuffled = movableCells.slice().sort(() => Math.random() - 0.5);
 
   const table = document.createElement('table');
@@ -83,22 +79,24 @@ function renderTable(grid, colorMap) {
       const tileIdx = pr * palW + palCol;
       let td;
       if (palCol < 0 || palCol >= palW) {
-        td = makeCell(null); // absent — outside palette area
+        td = makeCell(null);
       } else if (tileIdx < shuffled.length) {
         const [sr, sc] = shuffled[tileIdx];
         td = makeCell('tile');
         td.style.background = rgbStyle(colorMap.get(`${sr},${sc}`));
         td.dataset.srcRow = sr;
         td.dataset.srcCol = sc;
+        td.dataset.cellType = 'palette';
       } else {
-        td = makeCell('vacant palette-vacant'); // empty palette slot
+        td = makeCell('vacant palette-vacant');
+        td.dataset.cellType = 'palette';
       }
       tr.appendChild(td);
     }
     table.appendChild(tr);
   }
 
-  // Spacer row — height adapts to make the overall layout closer to square
+  // Spacer row
   const spacerH = spacerTdHeight(optimalSpacerRows(tableW, rows));
   const spacer = document.createElement('tr');
   spacer.className = 'spacer-row';
@@ -127,6 +125,7 @@ function renderTable(grid, colorMap) {
         td = makeCell('vacant grid-vacant');
         td.dataset.row = r;
         td.dataset.col = gc;
+        td.dataset.cellType = 'grid';
       }
       tr.appendChild(td);
     }
@@ -134,6 +133,65 @@ function renderTable(grid, colorMap) {
   }
 
   return table;
+}
+
+// ---------- Interaction ----------
+
+let selectedCell = null;
+
+function setSelected(td) {
+  if (selectedCell) selectedCell.classList.remove('selected');
+  selectedCell = td || null;
+  if (selectedCell) selectedCell.classList.add('selected');
+}
+
+function makeTile(td, bg, srcRow, srcCol) {
+  td.className = 'tile';
+  td.dataset.cellType = td.dataset.cellType; // preserve
+  td.style.background = bg;
+  td.dataset.srcRow = srcRow;
+  td.dataset.srcCol = srcCol;
+}
+
+function makeVacant(td) {
+  const vacantClass = td.dataset.cellType === 'palette' ? 'palette-vacant' : 'grid-vacant';
+  td.className = 'vacant ' + vacantClass;
+  td.dataset.cellType = td.dataset.cellType; // preserve
+  td.style.background = '';
+  delete td.dataset.srcRow;
+  delete td.dataset.srcCol;
+}
+
+function moveTile(from, to) {
+  makeTile(to, from.style.background, from.dataset.srcRow, from.dataset.srcCol);
+  makeVacant(from);
+}
+
+function swapTiles(a, b) {
+  const [bgA, rowA, colA] = [a.style.background, a.dataset.srcRow, a.dataset.srcCol];
+  makeTile(a, b.style.background, b.dataset.srcRow, b.dataset.srcCol);
+  makeTile(b, bgA, rowA, colA);
+}
+
+function handleClick(e) {
+  const td = e.target.closest('td');
+  if (!td) return;
+  if (td.classList.contains('anchor')) return;
+
+  const isTile    = td.classList.contains('tile');
+  const isVacant  = td.classList.contains('vacant');
+
+  if (!selectedCell) {
+    if (isTile) setSelected(td);
+  } else if (td === selectedCell) {
+    setSelected(null);
+  } else if (isTile) {
+    swapTiles(selectedCell, td);
+    setSelected(null);
+  } else if (isVacant) {
+    moveTile(selectedCell, td);
+    setSelected(null);
+  }
 }
 
 // ---------- Boot ----------
@@ -154,5 +212,7 @@ crosscolor.loadGrids().then(grids => {
   const { colorMap } = crosscolor.generateColorsForGrid(grid, regions);
 
   const playArea = document.getElementById('play-area');
-  playArea.replaceChildren(renderTable(grid, colorMap));
+  const table = renderTable(grid, colorMap);
+  table.addEventListener('click', handleClick);
+  playArea.replaceChildren(table);
 });

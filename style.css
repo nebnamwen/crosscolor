@@ -153,6 +153,11 @@ button:hover {
   cursor: default;
 }
 
+.play-grid .tile.selected {
+  outline: 4px solid var(--fg);
+  outline-offset: 0;
+}
+
 .play-grid .vacant {
   border-radius: 8px;
   border: 5px solid var(--border);
