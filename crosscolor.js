@@ -88,6 +88,11 @@ function validateGrid(grid, tierIdx, gridIdx) {
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < grid[r].length; c++) {
       if (!cellIsSeed(grid[r][c])) continue;
+      const neighbors = DIRS4.map(([dr, dc]) => cellAt(r+dr, c+dc));
+      if (!neighbors.some(v => cellInGrid(v) && !cellIsSeed(v)))
+        errors.push(`${label}: seed at (${r},${c}) has no adjacent normal cells`);
+      if (neighbors.some(v => cellIsSeed(v)))
+        errors.push(`${label}: seed at (${r},${c}) is directly adjacent to another seed`);
       if (cellInGrid(cellAt(r, c-1)) && cellInGrid(cellAt(r, c+1)))
         warnings.push(`${label}: seed at (${r},${c}) has in-grid neighbors on both sides horizontally`);
       if (cellInGrid(cellAt(r-1, c)) && cellInGrid(cellAt(r+1, c)))
