@@ -264,7 +264,7 @@ function tryGenerateColors(grid, regions) {
   const adjPairs = new Set();
 
   // Adjacent step check (orthogonal + diagonal)
-  const ADJ_THRESHOLD = 15;
+  const ADJ_THRESHOLD = 22;
   for (const [r, c] of allPos) {
     for (const [dr, dc] of DIRS8) {
       const k2 = cellKey(r+dr, c+dc);
@@ -280,7 +280,7 @@ function tryGenerateColors(grid, regions) {
   }
 
   // Non-adjacent distinguishability check
-  const NONADJ_THRESHOLD = 20;
+  const NONADJ_THRESHOLD = 30;
   for (let i = 0; i < allPos.length; i++) {
     for (let j = i + 1; j < allPos.length; j++) {
       const k1 = cellKey(...allPos[i]), k2 = cellKey(...allPos[j]);
