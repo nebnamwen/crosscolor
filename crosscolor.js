@@ -305,6 +305,36 @@ function generateColorsForGrid(grid, regions) {
   }
 }
 
+// ---------- Wordmark gradient ----------
+
+// Returns `steps` sRGB colors interpolated between two random seed colors.
+function generateGradientColors(steps) {
+  while (true) {
+    const c1 = randomSeedColor();
+    const c2 = randomSeedColor();
+    const colors = [];
+    for (let i = 0; i < steps; i++) {
+      const t = steps === 1 ? 0 : i / (steps - 1);
+      colors.push(c1.map((v, ch) => gammaCompress(v + t * (c2[ch] - v))));
+    }
+    const d = Math.sqrt(colors[0].map((v, i) => (v - colors[steps - 1][i]) ** 2).reduce((a, b) => a + b, 0));
+    if (d >= 80) return colors;
+  }
+}
+
+function applyWordmarkGradient() {
+  const h1 = document.querySelector('h1');
+  if (!h1) return;
+  const colors = generateGradientColors(h1.textContent.length || 10);
+  const stops = colors.map((rgb, i) =>
+    `rgb(${rgb[0]},${rgb[1]},${rgb[2]}) ${(i / (colors.length - 1) * 100).toFixed(1)}%`
+  ).join(', ');
+  h1.style.backgroundImage = `linear-gradient(to right, ${stops})`;
+  h1.style.webkitBackgroundClip = 'text';
+  h1.style.backgroundClip = 'text';
+  h1.style.color = 'transparent';
+}
+
 // ---------- Light/dark mode ----------
 
 const THEME_KEY = 'crosscolor-theme';
@@ -329,6 +359,7 @@ window.crosscolor = {
   detectRegions,
   validateAllGrids,
   generateColorsForGrid,
+  applyWordmarkGradient,
   initTheme,
   toggleTheme,
   cellInGrid,

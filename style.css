@@ -26,15 +26,28 @@ body {
 
 header {
   display: flex;
+  flex-direction: column;
+  padding: 1rem 1.25rem 0.5rem;
+  gap: 0.5rem;
+}
+
+.header-row {
+  display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem 1.25rem;
+}
+
+.header-controls {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
 }
 
 h1 {
+  font-family: 'Courier New', Courier, monospace;
   font-size: 1.4rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  font-weight: bold;
+  /* gradient applied via JS on load */
 }
 
 /* ---------- Buttons ---------- */
@@ -46,7 +59,8 @@ button, #back-btn {
   padding: 0.25rem 0.75rem;
   border-radius: 999px;
   cursor: pointer;
-  font-size: 0.875rem;
+  font-size: 1.1rem;
+  line-height: 1;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
