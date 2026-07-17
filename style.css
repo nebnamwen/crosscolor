@@ -175,6 +175,10 @@ button:hover {
   animation: tile-place 0.15s ease-out;
 }
 
+.play-grid .tile.tile-win {
+  animation: tile-place 0.4s ease-out;
+}
+
 @keyframes tile-appear {
   from { opacity: 0; transform: scale(0.4); }
   to   { opacity: 1; transform: scale(1); }

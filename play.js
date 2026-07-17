@@ -149,11 +149,15 @@ function resetGameState() {
 
 // ---------- Animation ----------
 
-function animateTile(td, cls) {
+function animateTile(td, cls, delayMs = 0) {
   td.classList.remove(cls);
   void td.offsetWidth; // force reflow to restart animation
+  td.style.animationDelay = delayMs ? `${delayMs}ms` : '';
   td.classList.add(cls);
-  td.addEventListener('animationend', () => td.classList.remove(cls), { once: true });
+  td.addEventListener('animationend', () => {
+    td.classList.remove(cls);
+    td.style.animationDelay = '';
+  }, { once: true });
 }
 
 // ---------- Tile helpers ----------
@@ -219,9 +223,12 @@ function checkWin(table) {
 
 function showWin(table, isPerfect) {
   const marker = isPerfect ? PERFECT_MARKER : WIN_MARKER;
+  const STEP = 30; // ms per diagonal step
   table.querySelectorAll('.tile').forEach(td => {
+    const delay = (td.parentElement.rowIndex + td.cellIndex) * STEP;
     td.innerHTML = marker;
     td.classList.add('win-marked');
+    animateTile(td, 'tile-win', delay);
   });
   table.classList.add(isPerfect ? 'perfect' : 'solved');
 }
