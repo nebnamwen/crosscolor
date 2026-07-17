@@ -52,7 +52,7 @@ h1 {
 
 /* ---------- Buttons ---------- */
 
-button, #back-btn {
+button, #back-btn, .icon-btn {
   background: none;
   border: 1px solid var(--border);
   color: var(--fg);
@@ -67,7 +67,7 @@ button, #back-btn {
   transition: background 0.1s;
 }
 
-button:hover, #back-btn:hover {
+button:hover, #back-btn:hover, .icon-btn:hover {
   background: var(--border);
 }
 
@@ -88,6 +88,14 @@ button:hover, #back-btn:hover {
 [data-theme="light"] #theme-toggle .toggle-light,
 [data-theme="dark"]  #theme-toggle .toggle-dark {
   background: var(--border);
+}
+
+/* ---------- About page ---------- */
+
+#about-content {
+  max-width: 600px;
+  padding: 1.25rem;
+  line-height: 1.6;
 }
 
 /* ---------- Tabs ---------- */
