@@ -5,6 +5,7 @@
   --fg:           #111;
   --border:       #ccc;
   --cell-neutral: #999;
+  --tile-size:    48px;
 }
 
 [data-theme="dark"] {
@@ -175,20 +176,20 @@ button:hover, #back-btn:hover, .icon-btn:hover {
 
 .play-grid {
   border-collapse: separate;
-  border-spacing: 4px;
+  border-spacing: calc(var(--tile-size) * 0.0833);
   width: max-content;
 }
 
 .play-grid td {
-  width: 48px;
-  height: 48px;
+  width: var(--tile-size);
+  height: var(--tile-size);
 }
 
 .play-grid .tile {
-  border-radius: 8px;
+  border-radius: calc(var(--tile-size) * 0.1667);
   cursor: pointer;
-  font-size: 18px;
-  line-height: 48px;
+  font-size: calc(var(--tile-size) * 0.375);
+  line-height: var(--tile-size);
   text-align: center;
   color: rgba(0,0,0,0.4);
 }
@@ -198,17 +199,17 @@ button:hover, #back-btn:hover, .icon-btn:hover {
 }
 
 .play-grid .tile.selected {
-  outline: 4px solid var(--fg);
+  outline: calc(var(--tile-size) * 0.0833) solid var(--fg);
   outline-offset: 0;
 }
 
 .play-grid .tile.win-marked {
   cursor: default;
-  font-size: 12px;
+  font-size: calc(var(--tile-size) * 0.25);
   line-height: normal;
   vertical-align: bottom;
   text-align: right;
-  padding: 0 5px 4px 0;
+  padding: 0 calc(var(--tile-size) * 0.104) calc(var(--tile-size) * 0.0833) 0;
 }
 
 .play-grid .tile.tile-appear {
@@ -235,8 +236,8 @@ button:hover, #back-btn:hover, .icon-btn:hover {
 }
 
 .play-grid .vacant {
-  border-radius: 8px;
-  border: 5px solid var(--border);
+  border-radius: calc(var(--tile-size) * 0.1667);
+  border: calc(var(--tile-size) * 0.104) solid var(--border);
 }
 
 .play-grid .palette-vacant {
@@ -250,17 +251,17 @@ button:hover, #back-btn:hover, .icon-btn:hover {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 16px;
-  height: 16px;
+  width: calc(var(--tile-size) * 0.333);
+  height: calc(var(--tile-size) * 0.333);
   background: var(--cell-neutral);
-  border-radius: 6px;
+  border-radius: calc(var(--tile-size) * 0.125);
 }
 
 .play-grid .tile.anchor {
   cursor: default;
-  font-size: 12px;
+  font-size: calc(var(--tile-size) * 0.25);
   line-height: normal;
   vertical-align: bottom;
   text-align: right;
-  padding: 0 5px 4px 0;
+  padding: 0 calc(var(--tile-size) * 0.104) calc(var(--tile-size) * 0.0833) 0;
 }

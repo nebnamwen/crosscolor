@@ -15,6 +15,11 @@ document.getElementById('theme-toggle').addEventListener('click', () => {
 
 // ---------- Palette geometry ----------
 
+const GAP_RATIO = 4 / 48;
+
+let currentTableW = 0;
+let currentEffectiveRows = 0;
+
 function paletteWidth(tileCount, puzzleWidth) {
   let w = Math.max(3, Math.ceil(tileCount / 2));
   if (w % 2 !== puzzleWidth % 2) w += 1;
@@ -22,16 +27,30 @@ function paletteWidth(tileCount, puzzleWidth) {
 }
 
 function optimalSpacerRows(tableW, gridRows) {
-  const cell = 52;
   const totalDataRows = 2 + gridRows;
-  const width = tableW * cell;
-  const height1 = (totalDataRows + 1) * cell;
-  const height2 = (totalDataRows + 2) * cell;
-  return Math.abs(width - height2) < Math.abs(width - height1) ? 2 : 1;
+  return Math.abs(tableW - (totalDataRows + 2)) < Math.abs(tableW - (totalDataRows + 1)) ? 2 : 1;
 }
 
-function spacerTdHeight(rows) {
-  return rows * 48 + (rows - 1) * 4;
+function spacerCalcHeight(rows) {
+  const factor = rows + (rows - 1) * GAP_RATIO;
+  return `calc(var(--tile-size) * ${factor.toFixed(4)})`;
+}
+
+function computeTileSize(tableW, effectiveRows) {
+  const header = document.querySelector('header');
+  const headerH = header ? header.offsetHeight : 0;
+  const pad = 40;
+  const availW = window.innerWidth - pad;
+  const availH = window.innerHeight - headerH - pad;
+  const colFactor = tableW * (1 + GAP_RATIO) + GAP_RATIO;
+  const rowFactor = effectiveRows * (1 + GAP_RATIO) + GAP_RATIO;
+  return Math.min(availW / colFactor, availH / rowFactor, 64);
+}
+
+function applyTileSize() {
+  if (!currentTableW) return;
+  const size = computeTileSize(currentTableW, currentEffectiveRows);
+  document.documentElement.style.setProperty('--tile-size', size + 'px');
 }
 
 // ---------- Table rendering ----------
@@ -91,12 +110,12 @@ function renderTable(grid, colorMap) {
   }
 
   // Spacer row
-  const spacerH = spacerTdHeight(optimalSpacerRows(tableW, rows));
+  const spacerRows = optimalSpacerRows(tableW, rows);
   const spacer = document.createElement('tr');
   spacer.className = 'spacer-row';
   for (let c = 0; c < tableW; c++) {
     const td = makeCell(null);
-    td.style.height = spacerH + 'px';
+    td.style.height = spacerCalcHeight(spacerRows);
     spacer.appendChild(td);
   }
   table.appendChild(spacer);
@@ -125,6 +144,9 @@ function renderTable(grid, colorMap) {
     }
     table.appendChild(tr);
   }
+
+  currentTableW = tableW;
+  currentEffectiveRows = 2 + spacerRows + rows;
 
   return table;
 }
@@ -314,4 +336,6 @@ crosscolor.loadGrids().then(grids => {
   const table = renderTable(grid, colorMap);
   table.addEventListener('click', handleClick);
   document.getElementById('play-area').replaceChildren(table);
+  applyTileSize();
+  window.addEventListener('resize', applyTileSize);
 });

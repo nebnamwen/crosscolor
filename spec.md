@@ -275,7 +275,7 @@ Decisions on non-essential visual and interaction details, to be revisited durin
 | # | Topic | Decision |
 |---|-------|----------|
 | 1 | Cell sizing and gap | Fixed at 48px + 4px gap for now. Polish: drive all sizes from a `--tile-size` CSS custom property set by JS as `min(viewportW / tableW, viewportH / totalRows, maxSize)`, with a resize listener, so the layout fills the window for any puzzle size. |
-| 2 | Selected tile highlight style | 4px solid outline, 0 offset |
+| 2 | Selected tile highlight style | 4px solid outline, 0 offset ✓ |
 | 7 | Reshuffle / reset button(s) | Deferred — see Palette section. Options: regenerate colors (page reload may suffice), reset all tiles to palette (most natural), or reshuffle unplaced palette tiles only. Decide in polish. |
 | 3 | Win animation | CSS transition on star markers appearing; exact timing TBD |
 | 4 | Button and back link styles | Back button, theme toggle, and tab buttons — exact appearance TBD; revisit together |
