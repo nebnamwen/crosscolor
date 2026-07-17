@@ -155,7 +155,7 @@ button:hover {
 
 .play-grid .vacant {
   border-radius: 8px;
-  border: 2px solid var(--border);
+  border: 5px solid var(--border);
 }
 
 .play-grid .palette-vacant {
@@ -172,9 +172,14 @@ button:hover {
   width: 16px;
   height: 16px;
   background: var(--cell-neutral);
-  border-radius: 3px;
+  border-radius: 6px;
 }
 
-.play-grid .spacer-row td {
-  height: 16px;
+.play-grid .tile.anchor {
+  cursor: default;
+  font-size: 12px;
+  line-height: normal;
+  vertical-align: bottom;
+  text-align: right;
+  padding: 0 5px 4px 0;
 }

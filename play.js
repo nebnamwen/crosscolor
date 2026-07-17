@@ -25,6 +25,22 @@ function paletteWidth(tileCount, puzzleWidth) {
   return w;
 }
 
+// Pick 1 or 2 spacer rows to make the overall layout closer to square.
+// Cell row height = 48px tile + 4px border-spacing = 52px.
+function optimalSpacerRows(tableW, gridRows) {
+  const cell = 52;
+  const totalDataRows = 2 + gridRows; // palette rows + grid rows
+  const width = tableW * cell;
+  const height1 = (totalDataRows + 1) * cell;
+  const height2 = (totalDataRows + 2) * cell;
+  return Math.abs(width - height2) < Math.abs(width - height1) ? 2 : 1;
+}
+
+// Spacer td height for N equivalent row heights: N*48 + (N-1)*4 px.
+function spacerTdHeight(rows) {
+  return rows * 48 + (rows - 1) * 4;
+}
+
 // ---------- Table rendering ----------
 
 function rgbStyle(rgb) {
@@ -82,10 +98,15 @@ function renderTable(grid, colorMap) {
     table.appendChild(tr);
   }
 
-  // Spacer row
+  // Spacer row — height adapts to make the overall layout closer to square
+  const spacerH = spacerTdHeight(optimalSpacerRows(tableW, rows));
   const spacer = document.createElement('tr');
   spacer.className = 'spacer-row';
-  for (let c = 0; c < tableW; c++) spacer.appendChild(makeCell(null));
+  for (let c = 0; c < tableW; c++) {
+    const td = makeCell(null);
+    td.style.height = spacerH + 'px';
+    spacer.appendChild(td);
+  }
   table.appendChild(spacer);
 
   // Grid rows

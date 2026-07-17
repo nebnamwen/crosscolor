@@ -271,7 +271,7 @@ Decisions on non-essential visual and interaction details, to be revisited durin
 
 | # | Topic | Decision |
 |---|-------|----------|
-| 1 | Cell sizing and gap | TBD during implementation |
+| 1 | Cell sizing and gap | Fixed at 48px + 4px gap for now. Polish: drive all sizes from a `--tile-size` CSS custom property set by JS as `min(viewportW / tableW, viewportH / totalRows, maxSize)`, with a resize listener, so the layout fills the window for any puzzle size. |
 | 2 | Selected tile highlight style | Highlighted border or glow — exact style TBD |
 | 3 | Win animation | CSS transition on star markers appearing; exact timing TBD |
 | 4 | Back button style on `play.html` | TBD |
