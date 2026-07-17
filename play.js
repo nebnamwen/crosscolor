@@ -1,6 +1,8 @@
 'use strict';
 
-const ANCHOR_MARKER = '&#10003;'; // ✓ — see UI Refinements #6
+const ANCHOR_MARKER  = '&#10003;'; // ✓ — see UI Refinements #6
+const WIN_MARKER     = '&#10003;'; // ✓ normal win
+const PERFECT_MARKER = '&#9733;';  // ★ perfect win
 
 // ---------- Theme toggle ----------
 
@@ -25,8 +27,6 @@ function paletteWidth(tileCount, puzzleWidth) {
   return w;
 }
 
-// Pick 1 or 2 spacer rows to make the overall layout closer to square.
-// Cell row height = 48px tile + 4px border-spacing = 52px.
 function optimalSpacerRows(tableW, gridRows) {
   const cell = 52;
   const totalDataRows = 2 + gridRows;
@@ -135,9 +135,19 @@ function renderTable(grid, colorMap) {
   return table;
 }
 
-// ---------- Interaction ----------
+// ---------- Game state ----------
 
 let selectedCell = null;
+let perfectRun = true;
+let solved = false;
+
+function resetGameState() {
+  selectedCell = null;
+  perfectRun = true;
+  solved = false;
+}
+
+// ---------- Tile helpers ----------
 
 function setSelected(td) {
   if (selectedCell) selectedCell.classList.remove('selected');
@@ -147,7 +157,7 @@ function setSelected(td) {
 
 function makeTile(td, bg, srcRow, srcCol) {
   td.className = 'tile';
-  td.dataset.cellType = td.dataset.cellType; // preserve
+  td.dataset.cellType = td.dataset.cellType;
   td.style.background = bg;
   td.dataset.srcRow = srcRow;
   td.dataset.srcCol = srcCol;
@@ -156,30 +166,62 @@ function makeTile(td, bg, srcRow, srcCol) {
 function makeVacant(td) {
   const vacantClass = td.dataset.cellType === 'palette' ? 'palette-vacant' : 'grid-vacant';
   td.className = 'vacant ' + vacantClass;
-  td.dataset.cellType = td.dataset.cellType; // preserve
+  td.dataset.cellType = td.dataset.cellType;
   td.style.background = '';
   delete td.dataset.srcRow;
   delete td.dataset.srcCol;
 }
 
+function isCorrectGridPlacement(tile, gridCell) {
+  return tile.dataset.srcRow === gridCell.dataset.row &&
+         tile.dataset.srcCol === gridCell.dataset.col;
+}
+
 function moveTile(from, to) {
+  if (to.dataset.cellType === 'grid' && !isCorrectGridPlacement(from, to))
+    perfectRun = false;
   makeTile(to, from.style.background, from.dataset.srcRow, from.dataset.srcCol);
   makeVacant(from);
 }
 
 function swapTiles(a, b) {
+  if (a.dataset.cellType === 'grid' && !isCorrectGridPlacement(b, a)) perfectRun = false;
+  if (b.dataset.cellType === 'grid' && !isCorrectGridPlacement(a, b)) perfectRun = false;
   const [bgA, rowA, colA] = [a.style.background, a.dataset.srcRow, a.dataset.srcCol];
   makeTile(a, b.style.background, b.dataset.srcRow, b.dataset.srcCol);
   makeTile(b, bgA, rowA, colA);
 }
 
+// ---------- Win detection ----------
+
+function checkWin(table) {
+  const gridCells = [...table.querySelectorAll('[data-row]')];
+  return gridCells.length > 0 && gridCells.every(td =>
+    td.classList.contains('tile') &&
+    td.dataset.srcRow === td.dataset.row &&
+    td.dataset.srcCol === td.dataset.col
+  );
+}
+
+function showWin(table, isPerfect) {
+  const marker = isPerfect ? PERFECT_MARKER : WIN_MARKER;
+  table.querySelectorAll('.tile').forEach(td => {
+    td.innerHTML = marker;
+    td.classList.add('win-marked');
+  });
+  table.classList.add(isPerfect ? 'perfect' : 'solved');
+}
+
+// ---------- Interaction ----------
+
 function handleClick(e) {
+  if (solved) return;
   const td = e.target.closest('td');
   if (!td) return;
   if (td.classList.contains('anchor')) return;
 
-  const isTile    = td.classList.contains('tile');
-  const isVacant  = td.classList.contains('vacant');
+  const isTile   = td.classList.contains('tile');
+  const isVacant = td.classList.contains('vacant');
 
   if (!selectedCell) {
     if (isTile) setSelected(td);
@@ -191,6 +233,12 @@ function handleClick(e) {
   } else if (isVacant) {
     moveTile(selectedCell, td);
     setSelected(null);
+  }
+
+  const table = e.currentTarget;
+  if (checkWin(table)) {
+    solved = true;
+    showWin(table, perfectRun);
   }
 }
 
@@ -211,8 +259,8 @@ crosscolor.loadGrids().then(grids => {
   const regions = crosscolor.detectRegions(grid);
   const { colorMap } = crosscolor.generateColorsForGrid(grid, regions);
 
-  const playArea = document.getElementById('play-area');
+  resetGameState();
   const table = renderTable(grid, colorMap);
   table.addEventListener('click', handleClick);
-  playArea.replaceChildren(table);
+  document.getElementById('play-area').replaceChildren(table);
 });
