@@ -39,18 +39,40 @@ h1 {
 
 /* ---------- Buttons ---------- */
 
-button {
+button, #back-btn {
   background: none;
   border: 1px solid var(--border);
   color: var(--fg);
   padding: 0.25rem 0.75rem;
-  border-radius: 4px;
+  border-radius: 999px;
   cursor: pointer;
   font-size: 0.875rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
   transition: background 0.1s;
 }
 
-button:hover {
+button:hover, #back-btn:hover {
+  background: var(--border);
+}
+
+/* Split theme toggle */
+
+#theme-toggle {
+  padding: 0;
+  overflow: hidden;
+  gap: 0;
+}
+
+#theme-toggle .toggle-light,
+#theme-toggle .toggle-dark {
+  padding: 0.25rem 0.6rem;
+  transition: background 0.1s;
+}
+
+[data-theme="light"] #theme-toggle .toggle-light,
+[data-theme="dark"]  #theme-toggle .toggle-dark {
   background: var(--border);
 }
 

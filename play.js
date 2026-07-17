@@ -6,17 +6,10 @@ const PERFECT_MARKER = '&#9733;';  // ★ perfect win
 
 // ---------- Theme toggle ----------
 
-const themeToggle = document.getElementById('theme-toggle');
+crosscolor.initTheme();
 
-function updateToggleLabel(theme) {
-  themeToggle.textContent = theme === 'dark' ? 'Light' : 'Dark';
-}
-
-const initialTheme = crosscolor.initTheme();
-updateToggleLabel(initialTheme);
-
-themeToggle.addEventListener('click', () => {
-  updateToggleLabel(crosscolor.toggleTheme());
+document.getElementById('theme-toggle').addEventListener('click', () => {
+  crosscolor.toggleTheme();
 });
 
 // ---------- Palette geometry ----------
