@@ -278,6 +278,6 @@ Decisions on non-essential visual and interaction details, to be revisited durin
 | 2 | Selected tile highlight style | 4px solid outline, 0 offset |
 | 7 | Reshuffle / reset button(s) | Deferred — see Palette section. Options: regenerate colors (page reload may suffice), reset all tiles to palette (most natural), or reshuffle unplaced palette tiles only. Decide in polish. |
 | 3 | Win animation | CSS transition on star markers appearing; exact timing TBD |
-| 4 | Back button style on `play.html` | TBD |
-| 5 | Tab style on `index.html` | TBD |
+| 4 | Button and back link styles | Back button, theme toggle, and tab buttons — exact appearance TBD; revisit together |
+| 5 | Game title / wordmark | Styling for the "Crosscolor" `<h1>` on both pages — font, weight, size, color treatment TBD |
 | 6 | Anchor marker character | Placeholder `✓` (`&check;`) — revisit: checkmark (original game) vs star (`★`) or other; one HTML entity, easy to change |
