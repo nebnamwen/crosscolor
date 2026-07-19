@@ -151,6 +151,10 @@ The retry loop runs until a valid assignment is found — there is no hard cap. 
 
 The gamma correction step (expand/compress with 2.2) will later be replaceable with a perceptual color space library (e.g. OKLCH) for more uniform-looking gradients across different hue regions. The pipeline structure is designed to make this substitution straightforward.
 
+https://bottosson.github.io/posts/colorwrong/
+https://bottosson.github.io/posts/oklab/
+https://github.com/Evercoder/culori
+
 ---
 
 ## UI Layout
