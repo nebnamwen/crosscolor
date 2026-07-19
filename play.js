@@ -315,6 +315,15 @@ const params = new URLSearchParams(window.location.search);
 const tierIndex = parseInt(params.get('tier'), 10);
 const gridIndex = parseInt(params.get('grid'), 10);
 
+function generatePuzzle(grid) {
+  resetGameState();
+  const regions = crosscolor.detectRegions(grid);
+  const { colorMap } = crosscolor.generateColorsForGrid(grid, regions);
+  const table = renderTable(grid, colorMap);
+  table.addEventListener('click', handleClick);
+  document.getElementById('play-area').replaceChildren(table);
+}
+
 crosscolor.loadGrids().then(grids => {
   if (isNaN(tierIndex) || isNaN(gridIndex) ||
       !grids[tierIndex] || !grids[tierIndex].grids[gridIndex]) {
@@ -323,18 +332,17 @@ crosscolor.loadGrids().then(grids => {
   }
 
   const grid = grids[tierIndex].grids[gridIndex];
-  const regions = crosscolor.detectRegions(grid);
-  const { colorMap } = crosscolor.generateColorsForGrid(grid, regions);
 
   document.getElementById('back-btn').href = `index.html?tier=${tierIndex}`;
+  document.getElementById('regen-btn').addEventListener('click', () => {
+    generatePuzzle(grid);
+  });
   document.getElementById('reset-btn').addEventListener('click', () => {
     resetPuzzle(document.getElementById('play-table'));
   });
 
-  resetGameState();
-  const table = renderTable(grid, colorMap);
-  table.addEventListener('click', handleClick);
-  document.getElementById('play-area').replaceChildren(table);
+  generatePuzzle(grid);
+
   applyTileSize();
   window.addEventListener('resize', applyTileSize);
 });
