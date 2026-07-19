@@ -26,11 +26,6 @@ function paletteWidth(tileCount, puzzleWidth) {
   return w;
 }
 
-function optimalSpacerRows(tableW, gridRows) {
-  const totalDataRows = 2 + gridRows;
-  return Math.abs(tableW - (totalDataRows + 2)) < Math.abs(tableW - (totalDataRows + 1)) ? 2 : 1;
-}
-
 function spacerCalcHeight(rows) {
   const factor = rows + (rows - 1) * GAP_RATIO;
   return `calc(var(--tile-size) * ${factor.toFixed(4)})`;
@@ -110,7 +105,7 @@ function renderTable(grid, colorMap) {
   }
 
   // Spacer row
-  const spacerRows = optimalSpacerRows(tableW, rows);
+  const spacerRows = 1.5;
   const spacer = document.createElement('tr');
   spacer.className = 'spacer-row';
   for (let c = 0; c < tableW; c++) {
