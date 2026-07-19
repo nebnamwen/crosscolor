@@ -172,7 +172,15 @@ button:hover, #back-btn:hover, .icon-btn:hover {
   height: 12px;
 }
 
+/* add border-spacing to width only for Safari to fix sizing bug */
+@supports (-webkit-hyphens:none) {
+  .preview-grid td {
+    width: calc(12px + 3px);
+  }
+}
+
 .preview-grid .preview-cell {
+  box-sizing: border-box;
   background: var(--cell-neutral);
   border-radius: 2px;
   font-size: 7px;
@@ -198,6 +206,13 @@ button:hover, #back-btn:hover, .icon-btn:hover {
 .play-grid td {
   width: var(--tile-size);
   height: var(--tile-size);
+}
+
+/* add border-spacing to width only for Safari to fix sizing bug */
+@supports (-webkit-hyphens:none) {
+    .play-grid td {
+      width: calc(var(--tile-size) * 1.0833);
+  }
 }
 
 .play-grid .tile {
