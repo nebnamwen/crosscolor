@@ -237,11 +237,15 @@ function checkWin(table) {
   );
 }
 
-function showWin(table, isPerfect) {
+function showWin(table, lasttd, isPerfect) {
   const marker = isPerfect ? PERFECT_MARKER : WIN_MARKER;
   const STEP = 30; // ms per diagonal step
   table.querySelectorAll('.tile').forEach(td => {
-    const delay = (td.parentElement.rowIndex + td.cellIndex) * STEP;
+    const delay = (
+	  (td.parentElement.rowIndex - lasttd.parentElement.rowIndex) ** 2  +
+	    (td.cellIndex - lasttd.cellIndex) ** 2
+    ) * STEP;
+
     td.innerHTML = marker;
     td.classList.add('win-marked');
     animateTile(td, 'tile-win', delay);
@@ -306,7 +310,7 @@ function handleClick(e) {
   const table = e.currentTarget;
   if (checkWin(table)) {
     solved = true;
-    showWin(table, perfectRun);
+    showWin(table, td, perfectRun);
   }
 }
 
