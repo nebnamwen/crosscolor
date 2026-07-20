@@ -234,11 +234,11 @@ function checkWin(table) {
 
 function showWin(table, lasttd, isPerfect) {
   const marker = isPerfect ? PERFECT_MARKER : WIN_MARKER;
-  const STEP = 30; // ms per diagonal step
+  const STEP = 50; // ms per diagonal step
   table.querySelectorAll('.tile').forEach(td => {
-    const delay = (
-	  (td.parentElement.rowIndex - lasttd.parentElement.rowIndex) ** 2  +
-	    (td.cellIndex - lasttd.cellIndex) ** 2
+    const delay = Math.sqrt(
+      (td.parentElement.rowIndex - lasttd.parentElement.rowIndex) ** 2  +
+      (td.cellIndex - lasttd.cellIndex) ** 2
     ) * STEP;
 
     td.innerHTML = marker;
